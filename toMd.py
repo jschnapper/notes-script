@@ -4,6 +4,7 @@ import os
 import json
 import cson
 import shutil
+import git
 
 # Paths to necessary directories
 # My paths:
@@ -14,10 +15,12 @@ from paths import *
 SOURCE = BOOSTNOTE
 DEST = GIT
 
+
 def cson_to_md():
     folder_names = get_folders()
     original_files = get_all_files()
     copy_files(original_files, folder_names)
+
 
     
 def get_folders():
@@ -72,8 +75,21 @@ def rewrite_file(file, content):
         file.write(line)
     file.close()
 
+def git_push():
+    try:
+        repo = git.Repo(DEST)
+        repo.git.add(u=True)
+        repo.index.commit("update notes")
+        origin = repo.remote(name='origin')
+        origin.push()
+    except:
+        print("unable to push")
+    finally:
+        print("notes pushed")
+
 if __name__ == "__main__":
     cson_to_md()
+    git_push()
 
 
 
